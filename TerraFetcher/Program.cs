@@ -1,7 +1,7 @@
-﻿using System.IO;
+﻿using Newtonsoft.Json;
+using System.IO;
 using System.Linq;
 using System.Text;
-using Newtonsoft.Json;
 using TerraFetcher.Models;
 using TerraFetcher.Services;
 
@@ -11,11 +11,14 @@ namespace TerraFetcher
     {
         private static void Main(string[] args)
         {
-            var service = new MirrorService();
-            var prices = service.GetCurrentPrice().Data.SelectMany(x => x.Assets).Where(x => x.Symbol != "MIR").OrderBy(x => x.Prices.Spread).ToList();
-
             var settings = File.ReadAllText("setting.json");
             var setting = JsonConvert.DeserializeObject<Setting>(settings);
+
+            var service = new MirrorService();
+            var prices = service.GetCurrentPrice().Data.SelectMany(x => x.Assets)
+                .Where(x => setting.SymbolFilters.Contains(x.Symbol) == false)
+                .OrderBy(x => x.Prices.Spread)
+                .ToList();
 
             var buys = prices.Where(x => x.Prices.Spread <= setting.Low && x.Prices.Spread >= 0.00M).ToList();
             var sells = prices.Where(x => x.Prices.Spread >= setting.High).ToList();

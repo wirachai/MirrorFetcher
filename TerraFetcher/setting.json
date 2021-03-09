@@ -1,6 +1,15 @@
 {
   "low": 0.01,
   "high": 0.03,
+  "SymbolFilters": [
+    "MIR",
+    "mAMC",
+    "mGME",
+    "mTSLA",
+    "mTWTR",
+    "mBTC",
+    "mETH"
+  ],
   "LineTokens": [
     ""
   ] 

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace TerraFetcher.Models
 {
@@ -8,6 +6,7 @@ namespace TerraFetcher.Models
     {
         public decimal Low { get; set; }
         public decimal High { get; set; }
+        public List<string> SymbolFilters { get; set; }
         public List<string> LineTokens { get; set; }
     }
 }
