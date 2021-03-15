@@ -1,7 +1,13 @@
 {
   "low": 0.01,
-  "high": 0.03,
-  "SymbolFilters": [
+  "high": 0.025,
+  "symbolFavorites": [
+    "mAMZN",
+    "mAAPL",
+    "mMSFT",
+    "mGOOGL"
+  ],
+  "symbolFilters": [
     "MIR",
     "mAMC",
     "mGME",
@@ -10,7 +16,7 @@
     "mBTC",
     "mETH"
   ],
-  "LineTokens": [
+  "lineTokens": [
     ""
-  ] 
+  ]
 }

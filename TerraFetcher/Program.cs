@@ -15,15 +15,28 @@ namespace TerraFetcher
             var setting = JsonConvert.DeserializeObject<Setting>(settings);
 
             var service = new MirrorService();
-            var prices = service.GetCurrentPrice().Data.SelectMany(x => x.Assets)
-                .Where(x => setting.SymbolFilters.Contains(x.Symbol) == false)
+            var prices = service.GetCurrentPrice().Data.SelectMany(x => x.Assets);
+
+            var favorites = prices.Where(x => setting.SymbolFavorites.Contains(x.Symbol))
                 .OrderBy(x => x.Prices.Spread)
                 .ToList();
-
-            var buys = prices.Where(x => x.Prices.Spread <= setting.Low && x.Prices.Spread >= 0.00M).ToList();
-            var sells = prices.Where(x => x.Prices.Spread >= setting.High).ToList();
+            var filtereds = prices.Where(x => setting.SymbolFilters.Contains(x.Symbol) == false)
+                .OrderBy(x => x.Prices.Spread)
+                .ToList();
+            var buys = filtereds.Where(x => x.Prices.Spread <= setting.Low && x.Prices.Spread >= 0.00M).ToList();
+            var sells = filtereds.Where(x => x.Prices.Spread >= setting.High).ToList();
 
             var message = new StringBuilder("\n");
+            if (favorites.Any())
+            {
+                message.AppendLine("Mirror Favorites:");
+                foreach (var asset in favorites)
+                {
+                    message.AppendLine($"- {asset.Symbol} {asset.Prices.Spread * 100:F}%: {asset.Prices.PriceAt:F}");
+                }
+                message.AppendLine();
+            }
+
             if (buys.Any())
             {
                 message.AppendLine("Mirror Buy:");
