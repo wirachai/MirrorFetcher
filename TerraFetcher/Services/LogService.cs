@@ -1,13 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.IO;
-using Newtonsoft.Json;
 using TerraFetcher.Models;
 
 namespace TerraFetcher.Services
 {
     public class LogService
     {
-        private const string filePath = "log.json";
+        private string filePath = Path.Combine(Directory.GetCurrentDirectory(), "log.json");
 
         public List<LogModel> GetLogs()
         {
