@@ -77,11 +77,11 @@ namespace TerraFetcher.Services
                 var log = logs.FirstOrDefault(x => x.Symbol == asset.Symbol);
                 if (log != null)
                 {
-                    if (asset.Prices.OraclePriceAt > log.OraclePrice)
+                    if (asset.Prices.PriceAt > log.Price)
                     {
                         change = " (+)";
                     }
-                    if (asset.Prices.OraclePriceAt < log.OraclePrice)
+                    if (asset.Prices.PriceAt < log.Price)
                     {
                         change = " (-)";
                     }
@@ -109,7 +109,7 @@ namespace TerraFetcher.Services
             var newLogs = prices.Select(x => new LogModel
             {
                 Symbol = x.Symbol,
-                OraclePrice = x.Prices.OraclePriceAt
+                Price = x.Prices.PriceAt
             }).ToList();
             logService.WriteLogs(newLogs);
         }

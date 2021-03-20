@@ -3,6 +3,6 @@
     public class LogModel
     {
         public string Symbol { get; set; }
-        public decimal OraclePrice { get; set; }
+        public decimal Price { get; set; }
     }
 }
