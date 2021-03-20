@@ -1,9 +1,4 @@
-﻿using Newtonsoft.Json;
-using System.IO;
-using System.Linq;
-using System.Text;
-using TerraFetcher.Models;
-using TerraFetcher.Services;
+﻿using TerraFetcher.Services;
 
 namespace TerraFetcher
 {
@@ -11,61 +6,8 @@ namespace TerraFetcher
     {
         private static void Main(string[] args)
         {
-            var settings = File.ReadAllText("setting.json");
-            var setting = JsonConvert.DeserializeObject<Setting>(settings);
-
-            var service = new MirrorService();
-            var prices = service.GetCurrentPrice().Data.SelectMany(x => x.Assets);
-
-            var favorites = prices.Where(x => setting.SymbolFavorites.Contains(x.Symbol))
-                .OrderBy(x => x.Prices.Spread)
-                .ToList();
-            var filtereds = prices.Where(x => setting.SymbolFilters.Contains(x.Symbol) == false)
-                .OrderBy(x => x.Prices.Spread)
-                .ToList();
-            var buys = filtereds.Where(x => x.Prices.Spread <= setting.Low && x.Prices.Spread >= 0.00M).ToList();
-            var sells = filtereds.Where(x => x.Prices.Spread >= setting.High).ToList();
-
-            var message = new StringBuilder("\n");
-            if (favorites.Any())
-            {
-                message.AppendLine("Mirror Favorites:");
-                foreach (var asset in favorites)
-                {
-                    message.AppendLine($"- {asset.Symbol} {asset.Prices.Spread * 100:F}%: {asset.Prices.PriceAt:F}");
-                }
-                message.AppendLine();
-            }
-
-            if (buys.Any())
-            {
-                message.AppendLine("Mirror Buy:");
-                foreach (var asset in buys)
-                {
-                    message.AppendLine($"- {asset.Symbol} {asset.Prices.Spread * 100:F}%: {asset.Prices.PriceAt:F}");
-                }
-                message.AppendLine();
-            }
-
-            if (sells.Any())
-            {
-                message.AppendLine("Mirror Sell:");
-                foreach (var asset in sells)
-                {
-                    message.AppendLine($"- {asset.Symbol} {asset.Prices.Spread * 100:F}%: {asset.Prices.PriceAt:F}");
-                }
-                message.AppendLine();
-            }
-
-            var sendingMessage = message.ToString();
-            if (string.IsNullOrWhiteSpace(sendingMessage) == false)
-            {
-                var line = new LineNotify();
-                foreach (var token in setting.LineTokens)
-                {
-                    line.Send(token, sendingMessage);
-                }
-            }
+            var app = new AppService();
+            app.Run();
         }
     }
 }
