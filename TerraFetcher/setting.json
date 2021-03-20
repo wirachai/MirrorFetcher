@@ -3,16 +3,19 @@
   "high": 0.025,
   "symbolFavorites": [
     "mAMZN",
-    "mAAPL",
     "mMSFT",
-    "mGOOGL"
+    "mGOOGL",
+    "mSPY"
   ],
   "symbolFilters": [
     "MIR",
+    "mABNB",
     "mAMC",
     "mGME",
     "mTSLA",
+    "mQQQ",
     "mTWTR",
+    "mVIXY",
     "mBTC",
     "mETH"
   ],
