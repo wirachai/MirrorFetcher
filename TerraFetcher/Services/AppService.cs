@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,16 +11,20 @@ namespace TerraFetcher.Services
     public class AppService
     {
         private readonly MirrorService mirrorService;
+        private readonly DatabaseService databaseService;
         private readonly LogService logService;
 
         public AppService()
         {
             mirrorService = new MirrorService();
+            databaseService = new DatabaseService();
             logService = new LogService();
         }
 
         public void Run()
         {
+            var now = DateTime.Now;
+
             Setting setting = GetSetting();
             var prices = mirrorService.GetCurrentPrice().Data.SelectMany(x => x.Assets);
             List<LogModel> logs = logService.GetLogs();
@@ -27,6 +32,8 @@ namespace TerraFetcher.Services
             StringBuilder message = ComposeNotifyMessage(setting, prices, logs);
             var sendingMessage = message.ToString();
             SendLineNotify(setting, sendingMessage);
+
+            WriteDatabase(now, prices);
 
             WriteLog(prices);
         }
@@ -102,6 +109,18 @@ namespace TerraFetcher.Services
                     line.Send(token, sendingMessage);
                 }
             }
+        }
+
+        private void WriteDatabase(DateTime now, IEnumerable<Asset> prices)
+        {
+            var tickers = prices.Select(x => new TickerModel
+            {
+                Symbol = x.Symbol,
+                DateTime = now,
+                Price = x.Prices.PriceAt,
+                OraclePrice = x.Prices.OraclePriceAt
+            }).ToList();
+            databaseService.Save(tickers);
         }
 
         private void WriteLog(IEnumerable<Asset> prices)
